@@ -1,0 +1,12 @@
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+
+index:
+    path:     /
+    defaults: { _controller: AppBundle:Default:index }
+
+getPositions:
+    path:     /getpositions
+    defaults: { _controller: AppBundle:Default:getCurrentPosition }
+    options:
+        expose: true
