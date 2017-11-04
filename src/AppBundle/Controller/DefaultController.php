@@ -35,7 +35,9 @@ class DefaultController extends Controller
             CURLOPT_SSL_VERIFYHOST      => false,
             CURLOPT_SSL_VERIFYSTATUS    => false,    // to verify certificate status
             CURLOPT_USERPWD             => $username . ":" . $password,
-            CURLOPT_HTTPAUTH            => CURLAUTH_DIGEST
+            CURLOPT_HTTPAUTH            => CURLAUTH_DIGEST,
+            CURLOPT_TIMEOUT             => 400
+
         );
 
         $ch = curl_init();
