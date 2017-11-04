@@ -41,8 +41,8 @@ class DefaultController extends Controller
         $ch = curl_init();
         curl_setopt_array( $ch, $options );
 
-        try {
-            $raw_response = curl_exec($ch);
+        /*try {
+
 
             if(curl_errno($ch))
                 throw new Exception(curl_error($ch), 500);
@@ -57,48 +57,13 @@ class DefaultController extends Controller
 
 //            if ($ch != null) curl_close($ch);
 //            throw new Exception($ex);
-        }
+        }*/
+
+        $raw_response = curl_exec($ch);
 
         $data = json_decode($raw_response);
-        $timestamp = $data[0];
         unset($data[0]);
 
-        $pdo = new PDO('mysql:host=localhost;dbname=test', 'sua', '', array(
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_EMULATE_PREPARES => false
-        ));
-
-
-
-//We start our transaction.
-        $pdo->beginTransaction();
-        foreach ($data as $value){
-//            dump($value);
-
-            $sql = "INSERT INTO test(Code, Course, X, Y, Line, Type, Symbol, Direction, Delay, Timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute(array(
-                    $value->code,
-                    $value->course,
-                    $value->x,
-                    $value->y,
-                    $value->line,
-                    $value->type,
-                    $value->symbol,
-                    $value->direction,
-                    $value->delay,
-                    $timestamp
-                )
-            );
-
-        }
-
-        //We've got this far without an exception, so commit the changes.
-        $pdo->commit();
-//        dump($data);
-//        dump($data[1]->course);
-        die();
-
-        return new JsonResponse(array('data' => $data));
+        return new JsonResponse($data);
     }
 }
