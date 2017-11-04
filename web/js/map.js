@@ -1,13 +1,59 @@
 /**
  * Created by Piotr on 26.10.2017.
  */
+var lines =  new L.layerGroup();
+var markers = [];
+var map = L.map('mapid').setView([51.106952, 17.035020], 13);
+
+function ajaxCall() {
+
+    $.ajax({
+        type     : "GET",
+        url      : Routing.generate('getPositions'),
+        dataType: 'json',
+        timeout: 5000,
+        success: function(ret) {
+
+            console.log(markers);
+
+            $.each(ret, function (key, value) {
+
+                // console.log(markers[value["code"]]);
+                if(markers.hasOwnProperty(value["code"])){
+                    markers[value["code"]].setLatLng([value["y"],value["x"]]);
+                }
+                else{
+                    var marker = L.marker([value["y"],value["x"]], {"code" : value["code"]});
+                    markers[value["code"]] = marker;
+                    if(lines.hasOwnProperty(value["line"])){
+                        lines[value["line"]].addLayer(marker);
+                    }
+                    else{
+                        lines[value["line"]] = new L.LayerGroup().addLayer(marker).addTo(map);
+                    }
+
+                }
+
+                // markers[value["code"]].setLatLng([value["y"],value["x"]]).update();
+            });
+
+        },
+        complete: function(jqXHR) {
+
+            // console.log(markers);
+            setTimeout(ajaxCall,3000);
+            // console.log(lines);
+        },
+        error: function(jqXHR, errorText, errorThrown) {
+            //ten fragment wykona się w przypadku BŁĘDU
+            //do zmiennej errorText zostanie przekazany błąd
+        }
+    });
+}
 
 
 $( document ).ready(function() {
 
-    var markers = [];
-    var line145 = L.layerGroup();
-    var map = L.map('mapid').setView([51.106952, 17.035020], 13);
 
     L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -17,15 +63,14 @@ $( document ).ready(function() {
     }).addTo(map);
 
 
-    /*$("#btn").on("click", function () {
+    $("#btn").on("click", function () {
         // var x = document.getElementById("myDIV");
-        console.log("clicked");
-        if (map.hasLayer(markers["146"])) {
-            map.removeLayer(markers["146"]);
+        if (map.hasLayer(lines["0L"])) {
+            map.removeLayer(lines["0L"]);
         } else {
-            map.addLayer(markers["146"]);
+            map.addLayer(lines["0L"]);
         }
-    });*/
+    });
 
     $.ajax({
         type     : "GET",
@@ -34,18 +79,29 @@ $( document ).ready(function() {
 
         success: function(ret) {
 
-/*            $.each(ret, function (key, value) {
-                // console.log(value["x"]);
-                // console.log(value["line"]);
-                if(!markers.hasOwnProperty(value["line"]))
+            $.each(ret, function (key, value) {
+
+                var marker = L.marker([value["y"],value["x"]], {"code" : value["code"]});
+                markers[value["code"]] = marker;
+
+
+                if(!lines.hasOwnProperty(value["line"]))
                 {
-                    // console.log("true");
-                    // markers[value["line"]] = new L.LayerGroup().addLayer(L.marker([value["y"],value["x"]]));
+                                        // console.log(marker.getLayerId());
+
+
+                    // L.marker.setLatLng().update()
+                    // somemarker.setLatLng([latitude,longitude]).update();
+                    // markers[value["line"]] = new L.LayerGroup().addLayer(new L.marker([value["y"],value["x"]], {"code" : value["code"]}));
+                    lines[value["line"]] = new L.LayerGroup().addLayer(marker).addTo(map);
                     // var line = value["line"];
                     // markers[line].push(L.LayerGroup().addLayer(L.marker([value["y"],value["x"]])));
                 }
                 else {
-                    // markers[value["line"]].addLayer(L.marker([value["y"],value["x"]]));
+
+                    lines[value["line"]].addLayer(marker);
+
+
                 }
                 // lines._add()
                 // var marker = L.marker([value["y"],value["x"]]);
@@ -54,27 +110,21 @@ $( document ).ready(function() {
             });
 
             // map.addLayer(markers["145"]);
-            // console.log(markers["145"]);*/
+            // console.log(markers);
         },
         complete: function(jqXHR) {
-            console.log(jqXHR.responseJSON);
-            // map.addLayer(line145);
-            // mapp.removeLayer(line145);
 
-            // setTimeout(function(){  console.log("remove layer"); map.removeLayer(line145); }, 3000);
-            // setTimeout(function(){  console.log("add layer"); map.addLayer(line145); }, 3000);
-            // line145.addTo(map)
-            // line145.remove();
-            // $.each(markers, function (key, value) {
-            //     // console.log(value);
-            //     value.addTo(map);
-            // });
-            // console.log(value);
-            //ten fragment wykona się po zakończeniu łączenia - nie ważne czy wystąpił błąd, czy sukces
+            // markers["2201"].setLatLng([0,0]).update();
+            // console.log(markers);
+            // console.log(lines);
+
+            ajaxCall();
+
         },
         error: function(jqXHR, errorText, errorThrown) {
             //ten fragment wykona się w przypadku BŁĘDU
             //do zmiennej errorText zostanie przekazany błąd
         }
     });
+
 });
