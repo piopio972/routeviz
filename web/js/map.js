@@ -41,7 +41,7 @@ function ajaxCall() {
         complete: function(jqXHR) {
 
             // console.log(markers);
-            setTimeout(ajaxCall,3000);
+            setTimeout(ajaxCall,15000);
             // console.log(lines);
         },
         error: function(jqXHR, errorText, errorThrown) {
@@ -118,7 +118,7 @@ $( document ).ready(function() {
             // console.log(markers);
             // console.log(lines);
 
-            ajaxCall();
+            setTimeout(ajaxCall, 15000);
 
         },
         error: function(jqXHR, errorText, errorThrown) {
