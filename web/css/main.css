@@ -1,4 +1,7 @@
-#mapid { height: 700px; }
+#mapid {
+    height: 100%;
+    width: auto;
+}
 
 .leaflet-marker-pane > * {
     -webkit-transition: transform .3s linear;
@@ -6,4 +9,158 @@
     -o-transition: transform .3s linear;
     -ms-transition: transform .3s linear;
     transition: transform .3s linear;
+}
+
+/* nie dekorowanie linkow w sidebarze*/
+a {
+    text-decoration: none;
+}
+
+.input-group {
+    width: 200px;
+    margin: 0 auto;
+}
+
+#sidebar{
+    display: block;
+    width: 250px;
+    height: 100%;
+    max-width: 100%;
+    float: left;
+    bottom: 0px;
+    margin: 0px;
+    padding: 0px;
+    background: #2c4770;
+    /*overflow: auto;*/
+    overflow-y: auto;
+    overflow-x: visible;
+    /*transition: all 0.3s;*/
+}
+
+.label {
+    color: #FFFFFF;
+}
+
+#time-range{
+    padding: 5px;
+}
+
+#slider{
+    width: 90%;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+#sidebar.active{
+    margin: -250px;
+}
+
+#sidebar > ul > li > a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+    color: #fff;
+}
+#sidebar ul li a:hover {
+    color: #142e54;
+    background: #fff;
+}
+
+#sidebar ul li.active > a, a[aria-expanded="true"] {
+    color: #fff;
+    background: #051a38;
+}
+
+a, a:hover, a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+#loading-img {
+    background: url(http://preloaders.net/preloaders/360/Velocity.gif) center center no-repeat;
+    height: 100%;
+    z-index: 20;
+}
+
+.overlay {
+    z-index: 1000;
+    background: #e9e9e9;
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0.5;
+}
+
+p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5em;
+    font-weight: 300;
+    line-height: 1.7em;
+    color: #999;
+}
+
+#sidebar ul p {
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+#container, html, body{
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+}
+
+
+.navbar {
+    margin-bottom: 0px;
+}
+.sidebar-body{
+    width: 100%;
+    /*height: auto;*/
+    max-height: 90%;
+    padding: 5px;
+    display: flex;
+    flex-flow: wrap;
+    justify-content: space-around;
+    overflow: auto;
+}
+
+
+@media (max-width: 768px) {
+    /*#sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }*/
+}
+
+
+.flex-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+
+.flex-list div {
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    color: #fff;
+}
+
+.flex-list div:hover {
+    background: #4c668c;
+}
+
+.chosen {
+    background: #142e54;
 }

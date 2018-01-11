@@ -1,0 +1,71 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Positions
+ *
+ * @ORM\Table(name="Positions", indexes={@ORM\Index(name="fk_Positions_Lines_idx", columns={"line_id"})})
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PositionsRepository")
+ */
+class Positions
+{
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="course", type="string", length=45, nullable=false)
+     */
+    private $course;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code", type="string", length=45, nullable=false)
+     */
+    private $code;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="latitude", type="decimal", precision=10, scale=8, nullable=false)
+     */
+    private $latitude;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="longitude", type="decimal", precision=11, scale=8, nullable=false)
+     */
+    private $longitude;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="timestamp", type="datetime", nullable=false)
+     */
+    private $timestamp;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var \AppBundle\Entity\Lines
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Lines")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="line_id", referencedColumnName="line_id")
+     * })
+     */
+    private $line;
+
+
+}
+

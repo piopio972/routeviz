@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}Routeviz - real time location{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link rel="stylesheet" href="{{ asset('css/realtime.css') }}" />
+
+
+{% endblock %}
+
+{% block sidebar %}
+
+    <p>Choose a line</p>
+    <li>
+        <a href="#trams" data-toggle="collapse">Trams</a>
+        <div id="trams" class="collapse">
+            <div class="flex-list" id="tram-list">
+
+            </div>
+
+        </div>
+    </li>
+    <li>
+        <a href="#buses" data-toggle="collapse">Buses</a>
+        <div id="buses" class="collapse">
+            <div class="flex-list" id="bus-list">
+
+            </div>
+        </div>
+
+    </li>
+
+
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {#<script>#}
+        {#var image_path = '{{ asset('tram.png') }}';#}
+    {#</script>#}
+
+    <script src="{{ asset('js/current/current.js') }}"></script>
+    {#<script src="{{ asset('build/current.js') }}"></script>#}
+
+
+
+{% endblock %}

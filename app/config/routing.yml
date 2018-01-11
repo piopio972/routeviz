@@ -5,8 +5,40 @@ index:
     path:     /
     defaults: { _controller: AppBundle:Default:index }
 
+current:
+    path:     /current
+    defaults: { _controller: AppBundle:Default:index }
+
+historical:
+    path:     /historical
+    defaults: { _controller: AppBundle:Default:historical }
+
+clustering:
+    path:     /clustering
+    defaults: { _controller: AppBundle:Default:clustering }
+
 getPositions:
     path:     /getpositions
     defaults: { _controller: AppBundle:Default:getCurrentPosition }
+    options:
+        expose: true
+
+getHistorical:
+    path:     /gethistorical
+    defaults: { _controller: AppBundle:Default:getHistoricalData }
+    options:
+        expose: true
+
+getClusters:
+    path:     /getclusters
+    defaults: { _controller: AppBundle:Default:getClusters }
+    options:
+        expose: true
+
+
+getLines:
+    path:     /getlines
+    defaults: { _controller: AppBundle:Default:getLines }
+    methods:  [GET]
     options:
         expose: true

@@ -14,6 +14,8 @@ class PositionsService
 {
     public function getCurrentPositions()
     {
+        set_time_limit(0);
+
         $url = "https://62.233.178.84:8088/mobile?function=getPositions";
         $username = "android-mpk";
         $password = "g5crehAfUCh4Wust";
@@ -27,9 +29,10 @@ class PositionsService
             CURLOPT_SSL_VERIFYPEER      => false,    // for https, false to stop cURL from veryfying peer certificate
             CURLOPT_SSL_VERIFYHOST      => false,
             CURLOPT_SSL_VERIFYSTATUS    => false,    // to verify certificate status
+            CURLOPT_ENCODING            => '',
             CURLOPT_USERPWD             => $username . ":" . $password,
             CURLOPT_HTTPAUTH            => CURLAUTH_DIGEST,
-            CURLOPT_TIMEOUT_MS          => 2000
+//            CURLOPT_TIMEOUT_MS          => 2000
         );
 
         $ch = curl_init();
