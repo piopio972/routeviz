@@ -2,6 +2,7 @@
 
 self.addEventListener('message', function(e) {
 
+    console.log(e.data);
 
     var point = getEndPoint(e.data);
 
@@ -17,10 +18,10 @@ function haversine_distance(point1, point2) {
     }
 
     var R = 6371;
-    var lat1 = point1.location.latitude * Math.PI / 180,
-        lon1 = point1.location.longitude * Math.PI / 180;
-    var lat2 = point2.location.latitude * Math.PI / 180,
-        lon2 = point2.location.longitude * Math.PI / 180;
+    var lat1 = point1[0] * Math.PI / 180,
+        lon1 = point1[1] * Math.PI / 180;
+    var lat2 = point2[0] * Math.PI / 180,
+        lon2 = point2[1] * Math.PI / 180;
 
     var dLat = lat2 - lat1;
     var dLon = lon2 - lon1;
@@ -37,6 +38,7 @@ function haversine_distance(point1, point2) {
 
 
 function getEndPoint(points) {
+    console.log(points);
     var pointsForFindingLineEnd = points;
     var currentPoint = points[Math.floor(Math.random()*points.length)];
 

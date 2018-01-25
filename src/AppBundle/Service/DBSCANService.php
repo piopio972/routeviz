@@ -9,115 +9,121 @@
 namespace AppBundle\Service;
 
 use Phpml\Clustering\DBSCAN;
-use Phpml\Math\Distance\Euclidean;
 
 class DBSCANService
 {
+/*
+    public function haversine_distance($point1, $point2) {
+        // default 4 sig figs reflects typical 0.3% accuracy of spherical model
 
-    public function calculate($samples){
+    $R = 6371;
+    $lat1 = $point1[0] * pi() / 180;
+    $lon1 = $point1[1] * pi() / 180;
+    $lat2 = $point2[0] * pi() / 180;
+    $lon2 = $point2[1] * pi() / 180;
+
+    $dLat = $lat2 - $lat1;
+    $dLon = $lon2 - $lon1;
+
+    $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos($lat1) * cos($lat2) *
+            sin($dLon / 2) * sin($dLon / 2);
+
+    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+    $d = $R * $c;
+
+    return $d;
+}
+
+    public function getLineFromPoints($points, $startingPoint) {
+        $linePoints = $points;
+        $currentPoint = $startingPoint;
+        $line = array();
+
+
+        while(count($linePoints) > 0){
+            $nextPoint = null;
+            $distanceToNextPoint = INF;
+
+            for($i = 0; $i < count($linePoints); $i++){
+
+                $distance = $this->haversine_distance($linePoints[$i], $currentPoint);
+                if($distance < $distanceToNextPoint){
+                    $nextPoint = $linePoints[$i];
+                    $distanceToNextPoint = $distance;
+                }
+            }
+
+            $i = array_search($nextPoint, $points);
+
+
+            if($i != -1) {
+                array_slice($linePoints, $i, 1);
+            }
+
+
+        $currentPoint = $nextPoint;
+        $pPoint = [$currentPoint[0], $currentPoint[1]];
+        array_push($line, $pPoint);
+    }
+
+        return $line;
+    }
+
+    function getEndPoint($points) {
+        $pointsForFindingLineEnd = $points;
+        $currentPoint = array_rand($points, 1);
+
+        $i = array_search($currentPoint, $points);
+        if($i != -1) {
+            array_slice($pointsForFindingLineEnd, $i, 1);
+        }
+
+        while(count($pointsForFindingLineEnd) > 0){
+            $nextPoint = null;
+            $distanceToNextPoint = INF;
+
+            for($i = 0; $i < count($pointsForFindingLineEnd); $i++){
+
+                $distance = $this->haversine_distance($pointsForFindingLineEnd[$i], $currentPoint);
+                if($distance < $distanceToNextPoint){
+                    $nextPoint = $pointsForFindingLineEnd[$i];
+                    $distanceToNextPoint = $distance;
+                }
+            }
+
+            $i = array_search($nextPoint, $points);
+
+            if($i != -1) {
+                array_slice($pointsForFindingLineEnd, $i, 1);
+            }
+
+
+        $currentPoint = $nextPoint;
+    }
+
+        return $currentPoint;
+    }*/
+    public function calculate($samples, $eps, $min){
 
         ini_set('memory_limit', '1024M');
 
-//        dump($samples1);
-//        dump($samples);
 
-
-//        $dbscan1 = new DBSCAN($epsilon = 2, $minSamples = 3);
-//        $clusters1 = $dbscan1->cluster($samples1);
-//
-//        dump($clusters1);
-//        die();
-
-
-        $dbscan = new DBSCAN($epsilon = 0.01, $minSamples = 20, new Haversine());
+        $dbscan = new DBSCAN($eps, $min, new Haversine());
 
         $clusters = $dbscan->cluster($samples);
+
+        $centroids = array();
 
         foreach ($clusters as $cluster) {
 
             $centroids[] = $this->getCentroid($cluster);
         }
+
         return $centroids;
 
     }
 
-    public function cluster($samples)
-    {
-        $clusters = [];
-        $visited = [];
-
-        foreach ($samples as $index => $sample) {
-            if (isset($visited[$index])) {
-                continue;
-            }
-            $visited[$index] = true;
-
-            $regionSamples = $this->getSamplesInRegion($sample, $samples);
-            if (count($regionSamples) >= $this->minSamples) {
-                $clusters[] = $this->expandCluster($regionSamples, $visited);
-            }
-        }
-
-        return $clusters;
-    }
-
-    private function getSamplesInRegion($localSample, $samples)
-    {
-        $region = [];
-
-        foreach ($samples as $index => $sample) {
-//            if ($this->getDistance($localSample, $sample) < $this->epsilon) {
-                if ($this->getDistance($localSample, $sample) < 0.03) {
-                $region[$index] = $sample;
-            }
-        }
-
-        return $region;
-    }
-
-    private function expandCluster(array $samples, array &$visited) : array
-    {
-        $cluster = [];
-
-        $clusterMerge = [[]];
-        foreach ($samples as $index => $sample) {
-
-
-            if (!isset($visited[$index])) {
-                $visited[$index] = true;
-                $regionSamples = $this->getSamplesInRegion($sample, $samples);
-                if (count($regionSamples) > $this->minSamples) {
-                    $clusterMerge[] = $regionSamples;
-                }
-            }
-
-
-
-            $cluster[$index] = $sample;
-        }
-        $cluster = \array_merge($cluster, ...$clusterMerge);
-
-        return $cluster;
-    }
-
-    function getDistance($sample1, $sample2) {
-
-        $earth_radius = 6371;
-
-        $dLat = deg2rad((float)$sample2["latitude"] - (float)$sample1["latitude"]);
-        $dLon = deg2rad((float)$sample2["longitude"] - (float)$sample1["longitude"]);
-
-
-        $a = sin($dLat/2) * sin($dLat/2) + cos(deg2rad((float)$sample1["latitude"])) * cos(deg2rad((float)$sample2["latitude"])) * sin($dLon/2) * sin($dLon/2);
-        $c = 2 * asin(sqrt($a));
-        $d = $earth_radius * $c;
-
-        var_dump($d);
-
-
-        return $d;
-
-    }
 
     function getCentroid($coord)
     {

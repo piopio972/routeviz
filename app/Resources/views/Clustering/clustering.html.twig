@@ -47,13 +47,13 @@
         <a href="#dbscan" data-toggle="collapse">DBSCAN</a>
         <div id="dbscan" class="collapse">
 
-            <div class="label">Epsilon:</div>
+            <div class="label" id="epsilon">Epsilon:</div>
             <div class="form-group">
                 <input id="dbscan_epsilon" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="50" data-slider-step="1" data-slider-value="10"/>
             </div>
 
             <div class="form-group">
-                <div class="label">Minimum number of points in cluster:</div>
+                <div class="label" id="numbers">Minimum number of points in cluster:</div>
                 <input id="dbscan_points" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="30"/>
 
             </div>
@@ -64,8 +64,8 @@
 
         </div>
 
-        <a href="#kmeans" data-toggle="collapse">K-means</a>
-        <div id="kmeans" class="collapse"></div>
+        {#<a href="#kmeans" data-toggle="collapse">K-means</a>
+        <div id="kmeans" class="collapse"></div>#}
     </li>
 
 

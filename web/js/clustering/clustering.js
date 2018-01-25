@@ -26,10 +26,10 @@ function haversine_distance(point1, point2) {
     }
 
     var R = 6371;
-    var lat1 = point1.location.latitude * Math.PI / 180,
-        lon1 = point1.location.longitude * Math.PI / 180;
-    var lat2 = point2.location.latitude * Math.PI / 180,
-        lon2 = point2.location.longitude * Math.PI / 180;
+    var lat1 = point1[0] * Math.PI / 180,
+        lon1 = point1[1] * Math.PI / 180;
+    var lat2 = point2[0] * Math.PI / 180,
+        lon2 = point2[1] * Math.PI / 180;
 
     var dLat = lat2 - lat1;
     var dLon = lon2 - lon1;
@@ -114,48 +114,7 @@ function getEndPoint(points) {
 $( document ).ready(function() {
 
 
-    // $.ajax({
-    //     method: "POST",
-    //     url: 'http://test.roadmatching.com/rest/mapmatch/?app_id=e5ce8b2f&app_key=0fa00e2b498069aa3fdc2cd1d4909b8d',
-    //     data: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-    //     "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
-    //     "<trk>\n" +
-    //     "<name>Example Track</name>\n" +
-    //     "<trkseg>\n" +
-    //     "<trkpt lat=\"54.9328621088893\" lon=\"9.860624216140083\">\n" +
-    //     "<time>2009-10-17T18:37:26Z</time>\n" +
-    //     "</trkpt>\n" +
-    //     "<trkpt lat=\"54.93293237320851\" lon=\"9.86092208681491\">\n" +
-    //     "<time>2009-10-17T18:37:26Z</time>\n" +
-    //     "</trkpt>\n" +
-    //     "<trkpt lat=\"54.93327743521187\" lon=\"9.86187816543752\">\n" +
-    //     "<time>2009-10-17T18:37:26Z</time>\n" +
-    //     "</trkpt>\n" +
-    //     "<trkpt lat=\"54.93342326167919\" lon=\"9.862439849679859\">\n" +
-    //     "<time>2009-10-17T18:37:26Z</time>\n" +
-    //     "</trkpt>\n" +
-    //     "</trkseg>\n" +
-    //     "</trk>\n" +
-    //     "</gpx>",
-    //
-    //     crossDomain: true,
-    //
-    //     beforeSend: function(xhr) {
-    //         xhr.setRequestHeader("Content-Type", "application/gpx+xml");
-    //         xhr.setRequestHeader("Accept", "application/json");
-    //
-    //     }, success: function(data){
-    //         alert(data);
-    //         //process the JSON data etc
-    //     }
-    // });
 
-    // polyline.setOptions({
-    //     color: 'red',
-    //     weight: 3,
-    //     opacity: 0.5,
-    //     smoothFactor: 1
-    // });
 
     var dbscanEpsilon = $('#dbscan_epsilon').slider({
         formatter: function(value) {
@@ -169,6 +128,18 @@ $( document ).ready(function() {
         }
     });
 
+    $("#epsilon").html("Epsilon value: " + dbscanEpsilon.slider('getValue'));
+    $("#numbers").html("Min. no. of points in cluster value: " + dbscanPoints.slider('getValue'));
+
+    dbscanEpsilon.slider('on', 'change', function (e) {
+        $("#epsilon").html("Epsilon value: " + dbscanEpsilon.slider('getValue'));
+
+    });
+
+    dbscanPoints.slider('on', 'change', function (e) {
+        $("#numbers").html("Min. no. of points in cluster value: " + dbscanPoints.slider('getValue'));
+
+    });
 
     $('#submit_dbscan').on("click", function () {
 
@@ -182,23 +153,62 @@ $( document ).ready(function() {
         var epsilon = dbscanEpsilon.slider('getValue') / 1000;
         var points = dbscanPoints.slider('getValue');
 
-        console.log(date_from);
-        console.log(date_to);
-        console.log(line);
-        console.log(epsilon);
-        console.log(points);
 
         $.ajax({
 
             type        : "POST",
-            url         : Routing.generate('getHistorical'),
+            url         : Routing.generate('getClusters'),
             dataType    : 'json',
-            data        : {"line": line, "from": date_from, "to": date_to},
+            data        : {"line": line, "from": date_from, "to": date_to, "eps": epsilon, "min": points},
 
             success: function(ret) {
 
-                // console.log(ret);
-                myWorker.postMessage([ret, epsilon, points]);
+                // $(".overlay").hide();
+                // var data = ret;
+                // console.log(data);
+                // var point = getEndPoint(data);
+                // console.log(point);
+                // var line = getLineFromPoints(ret, point);
+                // console.log(line);
+                pointsWorker.postMessage(ret);
+
+                console.log(ret);
+
+                $(".overlay").hide();
+
+                if(map.hasLayer(groupLayer)){
+                    map.removeLayer(groupLayer);
+                }
+
+                pointsToFormLine = ret;
+                groupLayer.clearLayers();
+
+
+                $.each(ret, function (key, value) {
+
+                    // L.marker([value.location.latitude,value.location.longitude], {"title" : [value.location.latitude,value.location.longitude].toString()});
+                    // groupLayer.addLayer(L.marker([value.location.latitude,value.location.longitude], {"title" : [value.location.latitude,value.location.longitude].toString()}));
+
+                    groupLayer.addLayer(L.circleMarker([value[0],value[1]], {radius : '1', renderer: myRenderer}));
+
+
+                });
+
+                groupLayer.addTo(map);
+
+               /* if(map.hasLayer(polyline)){
+                    map.removeLayer(polyline);
+                }
+
+                for(var i = 0; i < e.data.length; i++){
+                    pointList.push(new L.LatLng(e.data[i][0], e.data[i][1]));
+                }
+
+
+                polyline.setLatLngs(pointList);
+
+                polyline.addTo(map);*/
+                // myWorker.postMessage([ret, epsilon, points]);
 
             },
             complete: function(jqXHR) {
@@ -304,14 +314,11 @@ $( document ).ready(function() {
             pointList.push(new L.LatLng(e.data[i][0], e.data[i][1]));
         }
 
-        L.Routing.control({
-            waypoints: pointList
-        }).addTo(map);
 
-        // polyline.setLatLngs(pointList);
+        polyline.setLatLngs(pointList);
 
 
-        // polyline.addTo(map);
+        polyline.addTo(map);
 
     };
 

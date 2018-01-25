@@ -17,10 +17,10 @@ function haversine_distance(point1, point2) {
     }
 
     var R = 6371;
-    var lat1 = point1.location.latitude * Math.PI / 180,
-        lon1 = point1.location.longitude * Math.PI / 180;
-    var lat2 = point2.location.latitude * Math.PI / 180,
-        lon2 = point2.location.longitude * Math.PI / 180;
+    var lat1 = point1[0] * Math.PI / 180,
+        lon1 = point1[1] * Math.PI / 180;
+    var lat2 = point2[0] * Math.PI / 180,
+        lon2 = point2[1] * Math.PI / 180;
 
     var dLat = lat2 - lat1;
     var dLon = lon2 - lon1;
@@ -61,7 +61,7 @@ function getLineFromPoints(points, startingPoint) {
         }
 
         currentPoint = nextPoint;
-        var pPoint = [currentPoint.location.latitude, currentPoint.location.longitude];
+        var pPoint = [currentPoint[0], currentPoint[1]];
         line.push(pPoint);
     }
 

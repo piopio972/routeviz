@@ -22,6 +22,23 @@ var myWorker;
 
 $( document ).ready(function() {
 
+
+
+    var heatmap_slider = $('#heatmap_size').slider({
+        formatter: function(value) {
+            return 'Current value: ' + value;
+        }
+    });
+
+    $("#heatmaplabel").html("Heatmap point intensity: " + heatmap_slider.slider('getValue'));
+
+    heatmap_slider.slider('on', 'change', function (e) {
+        $("#heatmaplabel").html("Heatmap point intensity: " + heatmap_slider.slider('getValue'));
+
+        heatLayer.setOptions({max: heatmap_slider.slider('getValue'), });
+
+    });
+
     heatLayer.setOptions({radius: 10, renderer: myRenderer, blur: 10});
 
     $('#submit_historical_btn').on("click", function () {
@@ -33,9 +50,9 @@ $( document ).ready(function() {
 
         var line = $('.flex-list').find('.chosen').text();
 
-        console.log(date_from);
-        console.log(date_to);
-        console.log(line);
+        // console.log(date_from);
+        // console.log(date_to);
+        // console.log(line);
 
         $.ajax({
 
@@ -45,6 +62,8 @@ $( document ).ready(function() {
             data        : {"line": line, "from": date_from, "to": date_to},
 
             success: function(ret) {
+
+                console.log(ret);
 
                 var points = ret.map( function (t) { return [t["latitude"], t["longitude"]]; });
 
@@ -153,7 +172,7 @@ $( document ).ready(function() {
     var myWorker = new Worker('/js/historical/DBSCANworker.js')
 
     myWorker.onmessage = function (e) {
-        console.log(e.data);
+        // console.log(e.data);
     };
 
     // app.sendAjax('GET', Routing.generate('getHistorical'), {"type": "bus"}, function(data){

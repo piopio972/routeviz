@@ -45,23 +45,10 @@ class DefaultController extends Controller
         $from = $request->request->get("from");
         $to = $request->request->get("to");
 
-//        var_dump($line);
-//        var_dump($from);
-//        var_dump($to);
-//        die();
 
         $em = $this->getDoctrine()->getManager();
 
-
-//        $line = 2;
-//        $date = mktime(20,00,00,11,5,2017);
-//        $date = "2017-11-16 00:00:00";
-        $date = $from;
         $points = $em->getRepository("AppBundle:Positions")->findPointsForLineOlderThanADate($line,$from,$to);
-
-//        die();
-//        $data = json_encode($points);
-
 
         return new JsonResponse($points);
     }
@@ -75,23 +62,43 @@ class DefaultController extends Controller
         $line = $request->request->get("line");
         $from = $request->request->get("from");
         $to = $request->request->get("to");
+        $eps = $request->request->get("eps");
+        $min = $request->request->get("min");
+
 
         $line = 2;
-        $from = "2017-11-17 00:00:00";
+        $from = "2017-11-16 00:00:00";
         $to = "2017-11-18 00:00:00";
-
+        $eps = 0.03;
+        $min = 10;
 
         $points = $em->getRepository("AppBundle:Positions")->findPointsForLineOlderThanADate($line,$from,$to);
         $pointscon = $con->convertPoints($points);
+        $output = $dbscan->calculate($pointscon, $eps, $min);
 
-        dump(json_encode($pointscon));
-        die();
-        $pointscon = $con->convertPoints($points);
+        /*$geojson = array(
+            'type'      => 'FeatureCollection',
+            'features'  => array()
+        );
 
-        $output = $dbscan->calculate($pointscon);
+        $feature = array(
+            'type' => 'Feature',
+            'geometry' => array(
+                'type' => 'LineString',
+                # Pass Longitude and Latitude Columns here
+                'coordinates' => $output
+            ),
+            # Pass other attribute columns here
+            'properties' => array(
+                "name" => "06/04/2015 Washington, District of Columbia",
+            "time" =>"2015-06-05T01:07:54Z",
+            "stroke" => "#555555",
+            "stroke-width" => 2.7,
+            "stroke-opacity" => 1,
+            )
+        );
 
-//        dump($output);
-//        die();
+        array_push($geojson['features'], $feature);*/
 
         return new JsonResponse($output);
     }

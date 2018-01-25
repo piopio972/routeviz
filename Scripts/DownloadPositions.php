@@ -57,7 +57,7 @@ $url = "https://62.233.178.84:8088/mobile?function=getPositions";
 
         unset($data[0]);
 
-        $pdo = new PDO('mysql:host=localhost;dbname=routeviz', 'root', 'pass', array(
+        $pdo = new PDO('mysql:host=localhost;dbname=routeviz2', 'root', 'pass', array(
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_EMULATE_PREPARES => false
         ));
@@ -80,10 +80,9 @@ $url = "https://62.233.178.84:8088/mobile?function=getPositions";
                 $result = $first_stmt->fetchAll();
 
 
-                $sql = "INSERT INTO Positions(line_id, code, course, longitude, latitude, timestamp) VALUES ( ?, ?, ?, ?, ?, ?)";
+                $sql = "INSERT INTO Positions(code, course, longitude, latitude, timestamp) VALUES ( ?, ?, ?, ?, ?)";
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute(array(
-                        $result['0']['line_id'],
                         $value->code,
                         $value->course,
                         $value->x,
